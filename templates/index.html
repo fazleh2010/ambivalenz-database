@@ -63,6 +63,7 @@
                      <button class="collapse"><img src="{{ url_for('static', filename='images/open-vertical.svg') }}" alt="collapse"></button>
                   </div>
                   <ul class="menu">
+                     <li class="box clickable-box"><a class="box-link" href="{{ url_for('add_data') }}">Add Data</a></li>
                      <li class="box clickable-box"><a class="box-link" href="{{ url_for('visual_art') }}">Painting</a></li>
                      <li class="box clickable-box"><a class="box-link" href="{{ url_for('poster') }}">Poster</a></li>
                      <li class="box clickable-box"><a class="box-link" href="{{ url_for('portrait') }}">Portrait</a></li>
@@ -81,6 +82,7 @@
                      <!-- External URL is fine -->
                   </ul>
                </li>
+               <li class="box clickable-box"><a class="box-link" href="{{ url_for('add_data') }}">Add Data</a></li>
                <li class="box clickable-box"><a class="box-link" href="{{ url_for('visual_art') }}">Painting</a></li>
                <li class="box clickable-box"><a class="box-link" href="{{ url_for('poster') }}">Poster</a></li>
                <li class="box clickable-box"><a class="box-link" href="{{ url_for('portrait') }}">Portrait</a></li>
@@ -249,6 +251,7 @@
             </div>
             <nav class="curatorial-sections">
                <ul class="menu">
+                  <li class="visual-arts"><a href="{{ url_for('add_data') }}">Add Data</a></li>
                   <li class="visual-arts"><a href="{{ url_for('visual_art') }}">Painting</a></li>
                   <li class="visual-arts"><a href="{{ url_for('poster') }}">Poster</a></li>
                   <li class="visual-arts"><a href="{{ url_for('portrait') }}">Portrait</a></li>

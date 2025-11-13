@@ -840,7 +840,7 @@ def index():
 
 @app.route('/add_data', methods=['GET'])
 @login_required
-def add_data_form():
+def add_data():
     fields = get_field_list()
     data, colors, name_entities = {}, {}, {}
     return render_template("objekt_form_buttons.html", fields=fields, data=data, colors=colors, name_entities=name_entities)
