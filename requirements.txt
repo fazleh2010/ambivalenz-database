@@ -1,6 +1,9 @@
-flask
+﻿flask
 neo4j
-flask_login
-werkzeug
-beautifulsoup4
+flask-login
 markupsafe
+openpyxl
+spacy
+werkzeug
+pandas
+spacy[lookups]

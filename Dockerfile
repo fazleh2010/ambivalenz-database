@@ -1,4 +1,4 @@
-# Use an official Python runtime as a parent image
+﻿# Use an official Python runtime as a parent image
 FROM python:3.10-slim
 
 # Set the working directory inside the container
@@ -9,6 +9,9 @@ COPY requirements.txt .
 
 # Install any needed dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Install any needed dependencies
+RUN python -m spacy download de_core_news_sm
 
 # Copy the rest of the application code
 COPY . .
