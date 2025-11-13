@@ -63,7 +63,7 @@ textarea{width:100%;min-height:50px;padding:6px;font-size:14px;border:1px solid 
 <td class="col4">
     {% for e in name_entities.get(field, []) %}
         <button type="button" class="entity-button"
-            onclick="window.location='{{ url_for('open_entity_form',
+            onclick="window.location='{{ url_for('add_data_open_entity_form',
                 relation=field|urlencode,
                 source_node_id=data.get('Objekt-ID','1')|urlencode,
                 entity_name=e|urlencode) }}'">{{ e }}</button>
