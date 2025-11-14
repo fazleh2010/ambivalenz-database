@@ -912,10 +912,9 @@ def add_data_submit():
     objekt_id = f"{category}_{number}"
 
     # adding data to neo4j 
-    CSV_DIR = "marburg-project/dataset/german/input/"
-    JAR_PATH = "marburg-project/target/QuestionGrammarGenerator.jar"
+    CSV_DIR = "/app/marburg-project/dataset/german/input/"
+    JAR_PATH = "/app/marburg-project/target/QuestionGrammarGenerator.jar"
     CSV_FILE = os.path.join(CSV_DIR, f"entity_{objekt_id}.csv")
-
 
     os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -930,10 +929,19 @@ def add_data_submit():
         if source_node_id and relation_name:
             menu = "RELATION"
 
+        neo4j_uri = os.environ.get("NEO4J_URI", "bolt://neo4j:7687")
+        neo4j_user = os.environ.get("NEO4J_USER", "neo4j")
+        neo4j_pass = os.environ.get("NEO4J_PASSWORD", "password")
+
+        print("CSV_DIR exists?", os.path.exists(CSV_DIR))
+        print("Files in CSV_DIR:", os.listdir(CSV_DIR))
+        print("JAR_PATH exists?", os.path.exists(JAR_PATH))
+        print("Using Neo4j URI:", neo4j_uri)
+
         cmd = [
             "java", "-jar", JAR_PATH,
             menu,  # CREATE or RELATION
-            CSV_DIR,  # path to CSV directory
+            CSV_DIR,  # Path to CSV directory (mounted volume)
             os.environ.get("NEO4J_URI", "bolt://neo4j:7687"),
             os.environ.get("NEO4J_USER", "neo4j"),
             os.environ.get("NEO4J_PASSWORD", "password")

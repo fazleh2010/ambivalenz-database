@@ -1,4 +1,5 @@
 ﻿version: "3.9"
+
 services:
   neo4j:
     image: neo4j:5.19
@@ -21,9 +22,7 @@ services:
       - NEO4J_USER=neo4j
       - NEO4J_PASSWORD=password
     volumes:
-      - .:/app  # Mount project folder
-      # Mount only the CSV input directory so Java can see dynamically created files
-      - ./marburg-project/dataset/german/input:/app/marburg-project/dataset/german/input
+      - .:/app   # Mount current project so CSV/JAR paths work
 
 volumes:
   neo4j_data:
