@@ -837,49 +837,6 @@ def index():
 # -----------------------
 # add_data routes (SECOND script integrated under /add_data)
 # -----------------------
-
-@app.route('/add_data', methods=['GET'])
-@login_required
-def add_data():
-    fields = get_field_list()
-    data, colors, name_entities = {}, {}, {}
-    return render_template("objekt_form_buttons.html", fields=fields, data=data, colors=colors, name_entities=name_entities)
-
-@app.route('/add_data/upload', methods=['POST'])
-@login_required
-def add_data_upload():
-    file = request.files.get('file')
-    if not file or file.filename == '':
-        return "❌ No file selected", 400
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
-    file.save(filepath)
-    wb = load_workbook(filepath)
-    ws = wb.active
-
-    data, colors, name_entities = {}, {}, {}
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row or not row[0]:
-            continue
-        key = str(row[0]).strip()
-        val = str(row[1]).strip() if len(row) > 1 and row[1] else ""
-        data[key] = val
-        colors[key] = "yellow" if val else "red"
-        name_entities[key] = extract_name_entities(val)
-
-    return render_template("objekt_form_buttons.html", fields=list(data.keys()), data=data, colors=colors, name_entities=name_entities)
-
-@app.route('/add_data/extract_entities', methods=['POST'])
-@login_required
-def add_data_extract_entities():
-    fields = get_field_list()
-    data, colors, name_entities = {}, {}, {}
-    for key in fields:
-        val = request.form.get(key, "").strip()
-        ne = extract_name_entities(val)
-        data[key], name_entities[key] = val, ne
-        colors[key] = "green" if ne else "yellow" if val else "red"
-    return render_template("objekt_form_buttons.html", fields=fields, data=data, colors=colors, name_entities=name_entities)
-
 @app.route('/add_data/submit', methods=['POST'])
 @login_required
 def add_data_submit():
@@ -911,41 +868,39 @@ def add_data_submit():
     category = posted.get("category", "article")
     objekt_id = f"{category}_{number}"
 
-    # adding data to neo4j 
     CSV_DIR = "marburg-project/dataset/german/input/"
     JAR_PATH = "marburg-project/target/QuestionGrammarGenerator.jar"
+
     CSV_FILE = os.path.join(CSV_DIR, f"entity_{objekt_id}.csv")
-
-
     os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["Property", "text", "Status", "Name Entity"])
         writer.writerows(rows)
 
-        # run Java tool with arguments: menu, CSV path, Neo4j info
-        source_node_id = posted.get("source_node_id")
-        relation_name = posted.get("relation_name")
-        menu = "CREATE"
-        if source_node_id and relation_name:
-            menu = "RELATION"
+    # run Java tool with arguments: menu, CSV path, Neo4j info
+    source_node_id = posted.get("source_node_id")
+    relation_name = posted.get("relation_name")
+    menu = "CREATE"
+    if source_node_id and relation_name:
+        menu = "RELATION"
 
-        cmd = [
-            "java", "-jar", JAR_PATH,
-            menu,  # CREATE or RELATION
-            CSV_DIR,  # path to CSV directory
-            os.environ.get("NEO4J_URI", "bolt://neo4j:7687"),
-            os.environ.get("NEO4J_USER", "neo4j"),
-            os.environ.get("NEO4J_PASSWORD", "password")
-        ]
+    cmd = [
+        "java", "-jar", JAR_PATH,
+        menu,                      # CREATE or RELATION
+        CSV_DIR,                    # path to CSV directory
+        os.environ.get("NEO4J_URI", "bolt://neo4j:7687"),
+        os.environ.get("NEO4J_USER", "neo4j"),
+        os.environ.get("NEO4J_PASSWORD", "password")
+    ]
 
-        try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            print("stdout:", result.stdout)
-            print("stderr:", result.stderr)
-        except subprocess.CalledProcessError as e:
-            print(e.stderr)
-            return f"<h3>ERROR: {e.stderr}</h3>"
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        print("stdout:", result.stdout)
+        print("stderr:", result.stderr)
+    except subprocess.CalledProcessError as e:
+        print(e.stderr)
+        return f"<h3>ERROR: {e.stderr}</h3>"
 
     return redirect(url_for('add_data'))
 

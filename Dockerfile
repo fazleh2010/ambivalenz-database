@@ -1,27 +1,31 @@
 ﻿# Use an official Python runtime as a parent image
 FROM python:3.10-slim
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy requirements.txt first to leverage Docker caching
-COPY requirements.txt .
+RUN apt-get update && \
+    apt-get install -y openjdk-21-jre-headless && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install any needed dependencies
+RUN java -version
+
+# Copy requirements and install
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install any needed dependencies
+# Download spaCy German model
 RUN python -m spacy download de_core_news_sm
 
 # Copy the rest of the application code
 COPY . .
 
-# Make port 5000 available to the outside
+# Expose Flask port
 EXPOSE 5000
 
-# Define environment variable for Flask
+# Set environment variable for Flask
 ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 
-# Run the application
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
-
+# Default command
+CMD ["flask", "run"]
