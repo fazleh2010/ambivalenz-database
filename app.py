@@ -910,6 +910,8 @@ def add_data_submit():
     number = random.randint(1, 100)
     category = posted.get("category", "article")
     objekt_id = f"{category}_{number}"
+
+    # adding data to neo4j 
     DIR = "/home/melahi/code/A-mediawiki-project/neo4j-upload/dataset/german/input/"
     CSV_FILE = os.path.join(DIR, f"entity_{objekt_id}.csv")
     os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
