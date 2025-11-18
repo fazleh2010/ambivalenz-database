@@ -17,15 +17,17 @@ import static org.neo4j.driver.Values.parameters;
 public class Relation implements Constants {
 
     private String relationName = "";
-    private String object_id = "";
+    private String object_ID_1 = "";
+    private String object_ID_2 = "";
     private boolean relationExisit = false;
 
 
-    public Relation(LinkedHashMap<String, String> properties) {
+    public Relation(String entityObjectID,LinkedHashMap<String, String> properties) {
         for (String attribute : properties.keySet()) {
             if (attribute.contains(RELATION)) {
                 this.relationName = attribute.replace(RELATION, "");
-                this.object_id = properties.get(attribute);
+                this.object_ID_1 = properties.get(attribute);
+                this.object_ID_2 =entityObjectID;
                 this.relationExisit = true;
             }
         }
@@ -35,26 +37,28 @@ public class Relation implements Constants {
     public Relation() {
     }
 
-   
+    public String getRelationName() {
+        return relationName;
+    }
+
+    public String getObject_ID_1() {
+        return object_ID_1;
+    }
+
+    public String getObject_ID_2() {
+        return object_ID_2;
+    }
 
     public boolean isRelationExisit() {
         return relationExisit;
     }
 
-    public static String getRELATION() {
-        return RELATION;
-    }
+   
 
-    public String getRelationName() {
-        return relationName;
-    }
-
-    public String getObject_id() {
-        return object_id;
-    }
+   
 
     @Override
     public String toString() {
-        return "Relation{" + "relationName=" + relationName + ", object_id=" + object_id + ", relationExisit=" + relationExisit + '}';
+        return "Relation{" + "relationName=" + relationName + ", object_id=" + object_ID_1 + ", relationExisit=" + relationExisit + '}';
     }
 }

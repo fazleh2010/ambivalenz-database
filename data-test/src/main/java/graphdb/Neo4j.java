@@ -11,6 +11,7 @@ import core.Relation;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import static java.lang.System.exit;
 import java.nio.file.Paths;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
@@ -32,6 +33,13 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
+// Import Neo4j Driver classes
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
 
 import static org.neo4j.driver.Values.parameters;
 import utils.FileFolderUtils;
@@ -89,58 +97,78 @@ public class Neo4j implements AutoCloseable {
 
     }
 
-    public String findNode(String attribute, String value) {
-        String valueName = null;
+
+   // Method to find nodeType by Objekt-ID
+    public String findNodeTypeByObjectId(String Objekt_ID, String objectId) {
         try (Session session = driver.session()) {
-            Result result = session.run("MATCH (n) RETURN n");
+            return session.readTransaction(tx -> {
+                String cypher =
+                    "MATCH (n { `"+Objekt_ID+"`: $objectId }) " +
+                    "RETURN n.nodeType AS nodeType";
 
-            while (result.hasNext()) {
-                org.neo4j.driver.Record record = result.next();
-                Value nodeValue = record.get("n");
-                System.out.println("Node Label(s): " + nodeValue.asNode().labels());
-                System.out.println("------------");
-                Map<String, Object> properties = nodeValue.asNode().asMap();
-                System.out.println("Properties: " + properties);
-                for (String propertyName : properties.keySet()) {
-                    if (propertyName.contains(attribute)) {
-                        valueName = (String) properties.get(propertyName);
-                        return valueName;
-                    }
+                Result result = tx.run(cypher, Map.of("objectId", objectId));
 
+                if (result.hasNext()) {
+                    Record record = result.next();
+                    return record.get("nodeType").asString();
+                } else {
+                    return null;
                 }
-
-            }
+            });
         }
-        return valueName;
     }
 
     public Boolean createRelationship(Entity entity) {
-        String nodeTape1 = null, nodeType2 = null, objectID_1 = null, objectID_2 = null;
+        String nodeType1 = null, nodeType2 = null, objectID_1 = null, objectID_2 = null;
         Relation relation = entity.getRelation();
         if (relation.isRelationExisit()) {
-            nodeTape1 = entity.getNodeType();
-            objectID_1 = entity.getObjectID();
-            objectID_2 = relation.getObject_id();
-            System.out.println("nodeType: " + nodeTape1 + " entity_1:" + objectID_1 + " entity_2:" + objectID_2);
-            /*nodeType2 = findNode(OBJECT_ID,objectID_2);
-            if (nodeType2!=null) {
-                createRelationship(nodeTape1, objectID_1, nodeType2, objectID_2,relation.getRelationName());
-                return true;
-            }*/
+            objectID_1 = relation.getObject_ID_1();
+            objectID_2 = relation.getObject_ID_2();
+            nodeType1 = findNodeTypeByObjectId(OBJECT_ID,objectID_1);
+            nodeType2 = findNodeTypeByObjectId(OBJECT_ID,objectID_2);
+             System.out.println("nodeType1: " + nodeType1 + " objectID_1:" + objectID_1 +"  nodeType2: " + nodeType1 + " objectID_2:" + objectID_2);
+             createRelationship(nodeType1, // label of first node
+                    objectID_1, // Objekt-ID of first node
+                    relation.getRelationName(),
+                    nodeType2, // label of second node
+                    objectID_2 // Objekt-ID of second node
+            );
+            /*createRelationship("Painting", // label of first node
+                    "Object1", // Objekt-ID of first node
+                    relation.getRelationName(),
+                    "Person", // label of second node
+                    "Object2" // Objekt-ID of second node
+            );*/
+
+            return true;
         }
         return false;
 
     }
 
-    public void createRelationship(String node1, String name1, String node2, String name2, String relationshipName) {
+    public void createRelationship(
+            String label1, // label of Object1 (e.g. Painting or Person)
+            String objectId1, // Objekt-ID of Object1
+            String relationName,
+            String label2, // label of Object2
+            String objectId2 // Objekt-ID of Object2
+    ) {
         try (Session session = driver.session()) {
-            session.writeTransaction((TransactionWork<Void>) tx -> {
-                tx.run(
-                        "MATCH (a:" + node1 + " {" + Entity.OBJECT_ID + ": $" + name1 + "}), "
-                        + "(b:" + node2 + " {" + Entity.OBJECT_ID + ": $" + name2 + "}) "
-                        + "MERGE (a)-[r:" + relationshipName + "]->(b)",
-                        parameters("name1", name1, "name2", name2)
+            session.writeTransaction(tx -> {
+
+                // IMPORTANT: labels CANNOT be passed as parameters.
+                // They must be injected directly into the Cypher string.
+                String cypher
+                        = "MATCH (a:" + label1 + " { `Objekt-ID`: $id1 }) "
+                        + "MATCH (b:" + label2 + " { `Objekt-ID`: $id2 }) "
+                        + "MERGE (b)-[:" + relationName + "]->(a)";
+
+                Map<String, Object> params = Map.of(
+                        "id1", objectId1,
+                        "id2", objectId2
                 );
+
+                tx.run(cypher, params);
                 return null;
             });
         }

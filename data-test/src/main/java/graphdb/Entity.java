@@ -33,7 +33,7 @@ public final class Entity implements Constants {
         //System.out.println(this.subject+" "+this.nodeType+" "+this.object_id);
         //System.out.println( this.properties.keySet());
         this.findSubjectAndType(this.properties);
-        this.relation = new Relation(this.properties);
+        this.relation = new Relation(this.object_id ,this.properties);
         this.properties.put(NAME, this.subject);
         this.properties.put(NODE_TYPE, this.nodeType);
         //this.properties.put(OBJECT_ID, this.object_id);
@@ -54,7 +54,7 @@ public final class Entity implements Constants {
             } else if (property.contains(Entity.OBJECT_ID)) {
                 this.object_id = object;
             }
-
+           
         }
 
     }

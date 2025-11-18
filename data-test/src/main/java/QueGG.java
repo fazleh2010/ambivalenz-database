@@ -36,18 +36,22 @@ public class QueGG implements Constants {
     //MATCH (n:Painting) RETURN n LIMIT 25;
     // RELATION
     public static void main(String[] args) {
-        // Default Neo4j connection info
+        // Default Neo4j connection info#
+        Boolean javaflag=true;
+        Boolean neo4jFlag = true;
         String uri = "bolt://neo4j:7687";
         String user = "neo4j";
         String password = "password";
         String dir = "dataset/german/input/"; // default CSV path
-        String menu = CREATE_FROM_STRING; // default action
+        String menu = CREATE_FROM_FILE; // default action
         String nodeStr = "objectID=object1\n"
                 + "title=zypsy\n"
                 + "RELATION_authorOf=object2"; // default action
-        
-    
-        Boolean neo4jFlag = true;
+
+         if(javaflag)
+            uri = "bolt://localhost:7687";
+        else
+            uri = "bolt://neo4j:7687";
 
         // Parse arguments
         // args[0] = menu, args[1] = CSV dir, args[2] = URI, args[3] = user, args[4] = password
@@ -69,6 +73,7 @@ public class QueGG implements Constants {
         if (args.length >= 6) {
             nodeStr = args[5];
         }
+        
         
         System.out.println("successfully get inside the java code:");
         System.out.println(menu);
