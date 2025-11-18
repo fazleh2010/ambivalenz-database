@@ -942,6 +942,7 @@ def add_data_submit():
     neo4j_uri = os.environ.get("NEO4J_URI", "bolt://neo4j:7687")
     neo4j_user = os.environ.get("NEO4J_USER", "neo4j")
     neo4j_pass = os.environ.get("NEO4J_PASSWORD", "password")
+    javaflag="FALSE"
 
     cmd = [
         "java", "-jar", JAR_PATH,
@@ -950,7 +951,8 @@ def add_data_submit():
         neo4j_uri,
         neo4j_user,
         neo4j_pass,
-        result_string
+        result_string,
+        javaflag
     ]
 
     try:

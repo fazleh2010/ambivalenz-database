@@ -1,3 +1,4 @@
 stable version 20250612: indivudial page works
 
 Version1.1: everything works, stable version, works: user regustration, login, and everything else, also neo4j, docker composer
+Version1.2: Form works, after importing the Form the nodes and relations are added correctly
