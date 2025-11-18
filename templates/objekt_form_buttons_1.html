@@ -63,8 +63,10 @@ textarea{width:100%;min-height:50px;padding:6px;font-size:14px;border:1px solid 
 <td class="col4">
     {% for e in name_entities.get(field, []) %}
         <button type="button" class="entity-button"
-         onclick="saveAndOpenEntity('{{ field|urlencode }}', '{{ data.get('Objekt-ID','1')|urlencode }}', '{{ e|urlencode }}')">{{ e }}</button>
-
+            onclick="window.location='{{ url_for('add_data_open_entity_form',
+                relation=field|urlencode,
+                source_node_id=data.get('Objekt-ID','1')|urlencode,
+                entity_name=e|urlencode) }}'">{{ e }}</button>
     {% else %}
         <span style="color:#999;">–</span>
     {% endfor %}
@@ -122,25 +124,6 @@ function clearForm(){
  document.querySelectorAll("input[type=hidden]").forEach(i=>{if(i.name.startsWith("traffic_")) i.value="red";});
  document.getElementById("saveMessage").textContent="";
 }
-    async function saveAndOpenEntity(field, sourceNodeId, entityName) {
-    const form = document.getElementById('mainForm');
-    const fd = new FormData(form);
-
-    try {
-        // Save current form
-        await fetch(form.action, { method: 'POST', body: fd });
-        document.getElementById('saveMessage').textContent = "✅ Daten erfolgreich gespeichert!";
-
-        // Redirect to entity form
-        const url = `{{ url_for('add_data_open_entity_form') }}?relation=${field}&source_node_id=${sourceNodeId}&entity_name=${entityName}`;
-        window.location.href = url;
-
-    } catch (e) {
-        console.error(e);
-        document.getElementById('saveMessage').textContent = "❌ Fehler beim Speichern!";
-    }
-}
-
 </script>
 
 </body>

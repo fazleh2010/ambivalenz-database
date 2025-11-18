@@ -965,12 +965,12 @@ def add_data_submit():
 
     return redirect(url_for('add_data'))
 
-@app.route('/add_data/open_entity_form')
+@app.route('/add_data/open_entity_form/<path:relation>/<path:source_node_id>/<path:entity_name>')
 @login_required
-def add_data_open_entity_form():
-    relation = request.args.get("relation")
-    source_node_id = request.args.get("source_node_id")
-    entity_name = request.args.get("entity_name")
+def add_data_open_entity_form(relation, source_node_id, entity_name):
+    relation = unquote(relation)
+    entity_name = unquote(entity_name)
+    source_node_id = unquote(source_node_id)
 
     fields = get_field_list()
     data, colors, name_entities = {}, {}, {}
