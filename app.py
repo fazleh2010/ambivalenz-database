@@ -906,54 +906,60 @@ def add_data_submit():
     node_type_value = posted.get("nodeType", posted.get("category", "article"))
     rows.append(["nodeType", node_type_value, "", ""])
 
-    # save CSV to configured directory
+    # Build CSV-like string (instead of writing real CSV)
+    header = ["Property", "text", "Status", "Name Entity"]
+    result_string = "=".join(header) + "\n"
+
+    for row in rows:
+        result_string += "=".join(str(col) for col in row) + "\n"
+
+    # --- You now have the CSV-like string in result_string ---
+    # If you want to inspect it:
+    # print("CSV-LIKE STRING:\n", result_string)
+
+    # Generate unique object ID
     number = random.randint(1, 100)
     category = posted.get("category", "article")
     objekt_id = f"{category}_{number}"
 
-    # adding data to neo4j 
+    # --- Pass the CSV-like string to your Java tool ---
+    # Write string temporarily (if Java requires a file)
     CSV_DIR = "/app/marburg-project/dataset/german/input/"
+    #os.makedirs(CSV_DIR, exist_ok=True)
+
+    #CSV_FILE = os.path.join(CSV_DIR, f"entity_{objekt_id}.txt")
+    #with open(CSV_FILE, "w", encoding="utf-8") as f:
+    #    f.write(result_string)
+
+    # run Java tool with arguments: menu, CSV path, Neo4j info
     JAR_PATH = "/app/marburg-project/target/QuestionGrammarGenerator.jar"
-    CSV_FILE = os.path.join(CSV_DIR, f"entity_{objekt_id}.csv")
 
-    os.makedirs(os.path.dirname(CSV_FILE), exist_ok=True)
-    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(["Property", "text", "Status", "Name Entity"])
-        writer.writerows(rows)
+    source_node_id = posted.get("source_node_id")
+    relation_name = posted.get("relation_name")
+    # menu = "RELATION" if (source_node_id and relation_name) else "CREATE"
 
-        # run Java tool with arguments: menu, CSV path, Neo4j info
-        source_node_id = posted.get("source_node_id")
-        relation_name = posted.get("relation_name")
-        menu = "CREATE"
-        if source_node_id and relation_name:
-            menu = "RELATION"
+    menu ="CREATE_FROM_STRING"
+    neo4j_uri = os.environ.get("NEO4J_URI", "bolt://neo4j:7687")
+    neo4j_user = os.environ.get("NEO4J_USER", "neo4j")
+    neo4j_pass = os.environ.get("NEO4J_PASSWORD", "password")
 
-        neo4j_uri = os.environ.get("NEO4J_URI", "bolt://neo4j:7687")
-        neo4j_user = os.environ.get("NEO4J_USER", "neo4j")
-        neo4j_pass = os.environ.get("NEO4J_PASSWORD", "password")
+    cmd = [
+        "java", "-jar", JAR_PATH,
+        menu,
+        CSV_DIR,  # directory containing generated text file
+        neo4j_uri,
+        neo4j_user,
+        neo4j_pass,
+        result_string
+    ]
 
-        print("CSV_DIR exists?", os.path.exists(CSV_DIR))
-        print("Files in CSV_DIR:", os.listdir(CSV_DIR))
-        print("JAR_PATH exists?", os.path.exists(JAR_PATH))
-        print("Using Neo4j URI:", neo4j_uri)
-
-        cmd = [
-            "java", "-jar", JAR_PATH,
-            menu,  # CREATE or RELATION
-            CSV_DIR,  # Path to CSV directory (mounted volume)
-            os.environ.get("NEO4J_URI", "bolt://neo4j:7687"),
-            os.environ.get("NEO4J_USER", "neo4j"),
-            os.environ.get("NEO4J_PASSWORD", "password")
-        ]
-
-        try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            print("stdout:", result.stdout)
-            print("stderr:", result.stderr)
-        except subprocess.CalledProcessError as e:
-            print(e.stderr)
-            return f"<h3>ERROR: {e.stderr}</h3>"
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        print("stdout:", result.stdout)
+        print("stderr:", result.stderr)
+    except subprocess.CalledProcessError as e:
+        print(e.stderr)
+        return f"<h3>ERROR: {e.stderr}</h3>"
 
     return redirect(url_for('add_data'))
 
