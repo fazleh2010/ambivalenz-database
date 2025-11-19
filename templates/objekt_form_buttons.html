@@ -37,6 +37,7 @@ textarea{width:100%;min-height:50px;padding:6px;font-size:14px;border:1px solid 
 <select id="objectType" onchange="fillFields()">
     <option value="">-- Bitte wählen --</option>
     <option value="LegalText">LegalText</option>
+    <option value="Literature">Literature</option>
     <option value="Painting">Painting</option>
     <option value="Person">Person</option>
     <option value="Portrait">Portrait</option>
@@ -162,13 +163,19 @@ const fieldsByType = {
         "Versionsgeschichte"
     ],
     "Person": [
-        "Name",
+        "Varianter Name",
+        "Title",
         "Geburtsdatum",
         "Geburtsort",
-        "Biographie",
-        "Beruf",
-        "Institution",
-        "Publikationen"
+        "Sterbedatum",
+        "Beruf oder Beschäftigung",
+        "GND-Sachgruppe | Personen zu...",
+        "In Beziehung stehende Person",
+        "Werke",
+        "Quellen",
+        "GND-Nummer",
+        "Siehe auch",
+        "Literatur"
     ],
     "LegalText": [
         "Objekt-ID",
@@ -191,6 +198,38 @@ const fieldsByType = {
         "Verknüpfung",
         "Narrativwandel bei Medienwechsel",
         "Rezeptionsweg",
+        "Provenienz",
+        "Literatur",
+        "Ausstellungen / Aufführungen / Veröffentlichungen",
+        "Objekt- oder Werkteil",
+        "Rechte / Lizenzen",
+        "Digitalisat-Link/Pfad",
+        "Metadaten-Status",
+        "Erfasst von",
+        "Erfassungsdatum",
+        "Kommentar / Anmerkung",
+        "Versionsgeschichte"
+    ],
+    "Literature": [
+        "Objekt-ID",
+        "Titel",
+        "Künstler*in/Autor*in",
+        "Sichtbare oder genannte Personen",
+        "Entstehungsjahr",
+        "Ort der Entstehung / Nutzung",
+        "Gattung / Genre",
+        "Technik",
+        "Dimensionen:",
+        "Kurzbeschreibung",
+        "Motive / Topoi",
+        "Narrative / Diskurse",
+        "Historischer Kontext",
+        "Antiziganistische / Stigmatisierende Elemente",
+        "Agency",
+        "Verknüpfung",
+        "Narrativwandel bei Medienwechsel",
+        "Rezeptionsweg",
+        "Sammlung / Archiv",
         "Provenienz",
         "Literatur",
         "Ausstellungen / Aufführungen / Veröffentlichungen",
