@@ -33,13 +33,12 @@ textarea{width:100%;min-height:50px;padding:6px;font-size:14px;border:1px solid 
 </form>
 <hr>
 
+<!-- Object Type Selection -->
 <label for="objectType">Objekt Typ auswählen:</label>
 <select id="objectType" onchange="fillFields()">
     <option value="">-- Bitte wählen --</option>
-    <option value="LegalText">LegalText</option>
     <option value="Painting">Painting</option>
     <option value="Person">Person</option>
-    <option value="Portrait">Portrait</option>
 </select>
 
 <!-- Main Form -->
@@ -94,117 +93,17 @@ textarea{width:100%;min-height:50px;padding:6px;font-size:14px;border:1px solid 
 <script>
 let customIndex=0;
 
-
 const fieldsByType = {
     "Painting": [
-        "Objekt-ID",
-        "Titel",
-        "Künstler*in/Autor*in",
-        "Sichtbare oder genannte Personen",
-        "Entstehungsjahr",
-        "Ort der Entstehung / Nutzung",
-        "Gattung / Genre",
-        "Technik",
-        "Dimensionen:",
-        "Kurzbeschreibung",
-        "Motive / Topoi",
-        "Narrative / Diskurse",
-        "Historischer Kontext",
-        "Antiziganistische / Stigmatisierende Elemente",
-        "Agency",
-        "Verknüpfung",
-        "Narrativwandel bei Medienwechsel",
-        "Rezeptionsweg",
-        "Sammlung / Archiv",
-        "Provenienz",
-        "Literatur",
-        "Ausstellungen / Aufführungen / Veröffentlichungen",
-        "Objekt- oder Werkteil",
-        "Rechte / Lizenzen",
-        "Digitalisat-Link/Pfad",
-        "Metadaten-Status",
-        "Erfasst von",
-        "Erfassungsdatum",
-        "Kommentar / Anmerkung",
-        "Versionsgeschichte"
-    ],
-    "Portrait": [
-        "Objekt-ID",
-        "Titel",
-        "Titelvarianten (inkl. Übersetzungen)",
-        "Urheber*in / Verantwortliche Person (Bitte nutzen sie für die Vergabe des  Gemeinsame Normdatei (GND) die Betaversion des neuen DNB-Katalogs)",
-        "Quelle / Archiv",
-        "Sichtbare oder rekonstruierbare Personen",
-        "Entstehungsjahr",
-        "Ort der Entstehung / Nutzung",
-        "Gattung / Genre",
-        "Technik",
-        "Dimensionen:",
-        "Kurzbeschreibung / Inhaltliche Zusammenfassung",
-        "Antiziganistische / Stigmatisierende Elemente / Ambivalente Elemente",
-        "Motive / Topoi",
-        "Narrative / Diskurse",
-        "Historischer Kontext",
-        "Agency",
-        "Verknüpfung",
-        "Narrativwandel bei Medienwechsel",
-        "Rezeptionsweg",
-        "Provenienz",
-        "Literatur",
-        "Ausstellungen / Aufführungen / Veröffentlichungen",
-        "Objekt- oder Werkteil",
-        "Rechte / Lizenzen",
-        "Digitalisat-Link/Pfad",
-        "Metadaten-Status",
-        "Erfasst von",
-        "Erfassungsdatum",
-        "Kommentar / Anmerkung",
-        "Versionsgeschichte"
+        "Titel", "Künstler*in/Autor*in", "Entstehungsjahr",
+        "Ort der Entstehung / Nutzung", "Gattung / Genre",
+        "Technik", "Dimensionen", "Kurzbeschreibung", "Motive / Topoi"
     ],
     "Person": [
-        "Name",
-        "Geburtsdatum",
-        "Geburtsort",
-        "Biographie",
-        "Beruf",
-        "Institution",
-        "Publikationen"
-    ],
-    "LegalText": [
-        "Objekt-ID",
-        "Titel",
-        "Titelvarianten (inkl. Übersetzungen)",
-        "Urheber*in / Verantwortliche Person (Bitte nutzen sie für die Vergabe des  Gemeinsame Normdatei (GND) die Betaversion des neuen DNB-Katalogs)",
-        "Quelle / Archiv",
-        "Sichtbare oder rekonstruierbare Personen",
-        "Entstehungsjahr",
-        "Ort der Entstehung / Nutzung",
-        "Gattung / Genre",
-        "Technik",
-        "Dimensionen:",
-        "Kurzbeschreibung / Inhaltliche Zusammenfassung",
-        "Antiziganistische / Stigmatisierende Elemente / Ambivalente Elemente",
-        "Motive / Topoi",
-        "Narrative / Diskurse",
-        "Historischer Kontext",
-        "Agency",
-        "Verknüpfung",
-        "Narrativwandel bei Medienwechsel",
-        "Rezeptionsweg",
-        "Provenienz",
-        "Literatur",
-        "Ausstellungen / Aufführungen / Veröffentlichungen",
-        "Objekt- oder Werkteil",
-        "Rechte / Lizenzen",
-        "Digitalisat-Link/Pfad",
-        "Metadaten-Status",
-        "Erfasst von",
-        "Erfassungsdatum",
-        "Kommentar / Anmerkung",
-        "Versionsgeschichte"
+        "Name", "Geburtsdatum", "Geburtsort",
+        "Biographie", "Beruf", "Institution", "Publikationen"
     ]
 };
-
 
 function fillFields() {
     const typeSelect = document.getElementById("objectType");
