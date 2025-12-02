@@ -315,28 +315,28 @@ def Individual_page_var():
         return render_template("Individual_page_var.html")
     elif section == "Inhaltliche_Beschreibung":
         try:
-            with open("templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8") as file:
+            with open("s1-templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8") as file:
                 table_html = file.read()
             content = Markup(table_html)
         except FileNotFoundError:
             content = "Table file not found."
     elif section == "Semantische_Annotation":
         try:
-            with open("templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8") as file:
+            with open("s1-templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8") as file:
                 table_html = file.read()
             content = Markup(table_html)
         except FileNotFoundError:
             content = "Table file not found."
     elif section == "Semantische_Relationen":
         try:
-            with open("templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8") as file:
+            with open("s1-templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8") as file:
                 table_html = file.read()
             content = Markup(table_html)
         except FileNotFoundError:
             content = "Table file not found."
     elif section == "Technische_rechtliche":
         try:
-            with open("templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8") as file:
+            with open("s1-templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8") as file:
                 table_html = file.read()
             content = Markup(table_html)
         except FileNotFoundError:
@@ -372,7 +372,7 @@ def Roma_Sinti():
     """
     image_path = "private/Roma_Sinti.png"
     try:
-        with open("templates/book_roma_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/book_roma_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -387,7 +387,7 @@ def Zigeuner_Bukarest():
     """
     image_path = "private/Zigeuner_Bukarest.png"
     try:
-        with open("templates/book_Zigeuner_Bukarest.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/book_Zigeuner_Bukarest.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -402,7 +402,7 @@ def Gewerbeordnung_1883():
     """
     image_path = "private/Gewerbeordnung_1883.png"
     try:
-        with open("templates/book_gewerbeordnung_1883_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/book_gewerbeordnung_1883_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -434,7 +434,7 @@ def portrait_flower_1():
     """
     image_path = "private/portrait_flower_1.jpeg"
     try:
-        with open("templates/portrait_flower_1.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/portrait_flower_1.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -449,7 +449,7 @@ def portrait_person_2():
     """
     image_path = "private/portrait_person_2.jpeg"
     try:
-        with open("templates/portrait_person_2.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/portrait_person_2.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -466,7 +466,7 @@ def Weltausstellung_Paris_1900_1():
     """
     image_path = "private/TP2_Weltausstellung_Paris_1900_1.jpg"
     try:
-        with open("templates/poster_Weltausstellung_Paris_1900_1.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/poster_Weltausstellung_Paris_1900_1.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -481,7 +481,7 @@ def Weltausstellung_Paris_1900_2():
     """
     image_path = "private/TP2_Weltausstellung_Paris_1900_2.jpg"
     try:
-        with open("templates/poster_Weltausstellung_Paris_1900_2.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/poster_Weltausstellung_Paris_1900_2.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -496,7 +496,7 @@ def Nordungarn_Q1_TH():
     """
     image_path = "private/Nordungarn_Q1_TH.png"
     try:
-        with open("templates/song_Nordungarn_Q1_TH.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/song_Nordungarn_Q1_TH.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -511,7 +511,7 @@ def article_Zigeunern_Q2_TH():
          """
     image_path = "private/Zigeunern_Q2_TH.png"
     try:
-        with open("templates/article_Zigeunern_Q2_TH.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/article_Zigeunern_Q2_TH.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -526,7 +526,7 @@ def Zigeunerisch_Q3_TH():
          """
     image_path = "private/Zigeunerisch_Q3_TH.png"
     try:
-        with open("templates/poem-Zigeunerisch_Q3_TH.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/poem-Zigeunerisch_Q3_TH.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -542,7 +542,7 @@ def Zwei_Zigeuner():
     """
     image_path = "private/Zwei_Zigeuner.png"
     try:
-        with open("templates/zwei_zigeuner_obj_info_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/zwei_zigeuner_obj_info_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -558,7 +558,7 @@ def Ilonka():
     """
     image_path = "private/Ilonka.png"
     try:
-        with open("templates/painting_ilonka_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/painting_ilonka_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -577,7 +577,7 @@ def Zigeuner():
     )
     image_path = "private/Zigeuner.png"
     try:
-        with open("templates/painting_zigeuner_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/painting_zigeuner_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -595,7 +595,7 @@ def Katze():
     )
     image_path = "private/Katze.png"
     try:
-        with open("templates/painting_katze_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/painting_katze_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -610,7 +610,7 @@ def Zigeunerin():
         """
     image_path = "private/Zigeunerin.png"
     try:
-        with open("templates/painting_Zigeunerin_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/painting_Zigeunerin_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -625,7 +625,7 @@ def Zigeunerpaar():
         """
     image_path = "private/Zigeunerpaar.png"
     try:
-        with open("templates/painting_Zigeunerpaar_all.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/painting_Zigeunerpaar_all.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -640,7 +640,7 @@ def Person_Friedrich():
         """
     image_path = "private/Friedrich.png"
     try:
-        with open("templates/Person_Friedrich.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/Person_Friedrich.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:
@@ -653,7 +653,7 @@ def Person_Kampf():
     artist_info = ""
     image_path = "private/Kampf.png"
     try:
-        with open("templates/Person_Kampf.html", "r", encoding="utf-8") as file:
+        with open("s1-templates/Person_Kampf.html", "r", encoding="utf-8") as file:
             table_html = file.read()
         content = Markup(table_html)
     except FileNotFoundError:

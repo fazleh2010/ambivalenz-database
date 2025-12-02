@@ -164,7 +164,7 @@ def Individual_page_2():
     elif section == "Inhaltliche_Beschreibung":
         try:
             with open(
-                    "../templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -173,7 +173,7 @@ def Individual_page_2():
     elif section == "Semantische_Annotation":
         try:
             with open(
-                    "../templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -182,7 +182,7 @@ def Individual_page_2():
     elif section == "Semantische_Relationen":
         try:
             with open(
-                    "../templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -191,7 +191,7 @@ def Individual_page_2():
     elif section == "Technische_rechtliche":
         try:
             with open(
-                    "../templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -232,7 +232,7 @@ def Zwei_Zigeuner():
     if section == "Objekt_Informationen":
         try:
             with open(
-                    "../templates/zwei_zigeuner_obj_info.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_obj_info.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -241,7 +241,7 @@ def Zwei_Zigeuner():
     elif section == "Inhaltliche_Beschreibung":
         try:
             with open(
-                    "../templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -250,7 +250,7 @@ def Zwei_Zigeuner():
     elif section == "Semantische_Annotation":
         try:
             with open(
-                    "../templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -259,7 +259,7 @@ def Zwei_Zigeuner():
     elif section == "Semantische_Relationen":
         try:
             with open(
-                    "../templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -268,7 +268,7 @@ def Zwei_Zigeuner():
     elif section == "Technische_rechtliche":
         try:
             with open(
-                    "../templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)

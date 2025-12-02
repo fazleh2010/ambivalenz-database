@@ -1,6 +1,7 @@
 # merged_app.py
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash
 from markupsafe import Markup
+
 from markupsafe import Markup as MarkupType
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -14,7 +15,12 @@ import re
 import random
 import subprocess
 import spacy
+from flask import Flask, render_template, request
+from markupsafe import Markup
+from neo4j import GraphDatabase
 
+# CALL db.labels();
+#
 # -----------------------
 # App configuration
 # -----------------------
@@ -172,44 +178,41 @@ def sections():
 # ---------------------------------------------------------
 # FETCH ALL PAINTINGS FROM NEO4J
 # ---------------------------------------------------------
-def get_all_entities(label):
+def get_all_paintings():
     """
-    Fetch all nodes of a given label (Painting, Book, Poster, etc.)
-    from Neo4j, print their full data, and return a list of dictionaries
-    for template rendering.
+    Fetch all paintings from Neo4j, print their full data,
+    and return a list of dictionaries for template rendering.
     """
-    entities = []
+    paintings = []
     with driver.session() as session:
-
-        # IMPORTANT: Neo4j does NOT allow parameterized labels.
-        # So we must insert the label name into the query string directly.
-        query = f"""
-            MATCH (p:{label})
+        query = """
+            MATCH (p:Painting)
             RETURN p
             ORDER BY p.Name
         """
-
         result = session.run(query)
 
-        print(f"\n---- ALL {label.upper()} NODES IN DATABASE ----\n")
+        print("\n---- ALL PAINTING NODES IN DATABASE ----\n")
 
         for record in result:
             node = dict(record["p"])
 
-            print(f"🖼️ {label} Node:")
+            # Print full node for debugging
+            print("🎨 Painting Node:")
             for k, v in node.items():
                 print(f"  {k}: {v}")
             print("--------------------------------------\n")
 
-            entities.append({
+            # Append for use in template
+            paintings.append({
                 "name": node.get("Name", ""),
                 "title": node.get("Titel", node.get("Name", "")),
                 "description": node.get("Kurzbeschreibung", ""),
                 "image_path": node.get("Digitalisat-Link/Pfad", ""),
-                "url": f"/visual_art/{node.get('Name', '')}"
+                "url": f"/visual_art/{node.get('Name','')}"
             })
 
-    return entities
+    return paintings
 
 
 # ---------------------------------------------------------
@@ -217,57 +220,57 @@ def get_all_entities(label):
 # ---------------------------------------------------------
 @app.route("/visual_art",methods=["GET", "POST"])
 def visual_art():
-    paintings = get_all_entities("Painting")
+    paintings = get_all_paintings()
     return render_template("visual_art.html", paintings=paintings)
 
 @app.route("/book", methods=["GET", "POST"])
 def book():
-    paintings = get_all_entities("Book")
+    paintings = get_all_paintings()
     return render_template("book.html", paintings=paintings)
 
 @app.route("/article", methods=["GET", "POST"])
 def article():
-    paintings = get_all_entities("Article")
+    paintings = get_all_paintings()
     return render_template("article.html", paintings=paintings)
 
 @app.route("/poem", methods=["GET", "POST"])
 def poem():
-    paintings = get_all_entities("Poem")
+    paintings = get_all_paintings()
     return render_template("poem.html", paintings=paintings)
 
 @app.route("/song", methods=["GET", "POST"])
 def song():
-    paintings = get_all_entities("Song")
+    paintings = get_all_paintings()
     return render_template("song.html", paintings=paintings)
 
 @app.route("/legal_text", methods=["GET", "POST"])
 def legal_text():
-    paintings = get_all_entities("LegalText")
+    paintings = get_all_paintings()
     return render_template("legal_text.html", paintings=paintings)
 
 @app.route("/Person", methods=["GET", "POST"])
 def Person():
-    paintings = get_all_entities("Person")
+    paintings = get_all_paintings()
     return render_template("Person.html", paintings=paintings)
 
 @app.route("/poster", methods=["GET", "POST"])
 def poster():
-    paintings = get_all_entities("poster")
+    paintings = get_all_paintings()
     return render_template("poster.html", paintings=paintings)
 
 @app.route("/portrait", methods=["GET", "POST"])
 def portrait():
-    paintings = get_all_entities("Portrait")
+    paintings = get_all_paintings()
     return render_template("portrait.html", paintings=paintings)
 
 @app.route("/audio")
 def audio():
-    paintings = get_all_entities("Audio")
+    paintings = get_all_paintings()
     return render_template("audio.html", paintings=paintings)
 
 @app.route("/video")
 def video():
-    paintings = get_all_entities("Video")
+    paintings = get_all_paintings()
     return render_template("video.html", paintings=paintings)
 # ---------------------------------------------------------
 # INDIVIDUAL PAINTING ROUTE
@@ -296,10 +299,10 @@ def painting_page(painting_name):
     )
 
 @app.route("/book/<painting_name>")
-def book_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Book {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -314,15 +317,14 @@ def book_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
-
 @app.route("/article/<painting_name>")
-def article_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Article {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -337,15 +339,15 @@ def article_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
 
 @app.route("/poem/<painting_name>")
-def poem_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Poem {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -360,15 +362,15 @@ def poem_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
 
 @app.route("/song/<painting_name>")
-def song_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Song {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -383,15 +385,15 @@ def song_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
 
 @app.route("/legal_text/<painting_name>")
-def legal_text_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:LegalText {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -406,15 +408,15 @@ def legal_text_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
 
 @app.route("/Person/<painting_name>")
-def person_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Person {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -429,15 +431,15 @@ def person_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
 
 @app.route("/poster/<painting_name>")
-def poster_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Poster {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -452,15 +454,15 @@ def poster_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
 
 @app.route("/portrait/<painting_name>")
-def portrait_item(painting_name):
+def book(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Portrait {Name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -475,7 +477,30 @@ def portrait_item(painting_name):
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("Digitalisat-Link/Pfad", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
+        content=node
+    )
+
+@app.route("/portrait/<painting_name>")
+def book(painting_name):
+    with driver.session() as session:
+        query = """
+            MATCH (n:Painting {Name: $name})
+            RETURN n
+        """
+        result = session.run(query, name=painting_name)
+        record = result.single()
+
+    if not record:
+        return f"No data found for '{painting_name}'."
+
+    node = dict(record["n"])
+
+    return render_template(
+        "Individual_page_var.html",
+        title=node.get("Titel", painting_name),
+        artist_info=node.get("Kurzbeschreibung", ""),
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
         content=node
     )
 
@@ -527,6 +552,60 @@ def politics_of_photography():
 def Individual_page():
     return render_template("Individual_page.html")
 
+@app.route("/visual_art/Individual_page_var")
+def Individual_page_var():
+    section = request.args.get("section", default=None)
+
+    title = ""
+    artist_info = """
+                   Das Bild ist ambivalent: Es zeigt einerseits Respekt für die Ästhetik und „Malerhaftigkeit“ 
+                   der dargestellten Menschen, andererseits reproduziert es stereotype und exotisierende Merkmale. 
+                   Es kann sowohl als bewundernde Darstellung als auch als visuelle Festschreibung von „Andersartigkeit“ gelesen werden.
+                """
+    image_path = "private/Zwei_Zigeuner.png"
+
+    content = ""
+    if section == "Objekt_Informationen":
+        return render_template("Individual_page_var.html")
+    elif section == "Inhaltliche_Beschreibung":
+        try:
+            with open("s1-templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8") as file:
+                table_html = file.read()
+            content = Markup(table_html)
+        except FileNotFoundError:
+            content = "Table file not found."
+    elif section == "Semantische_Annotation":
+        try:
+            with open("s1-templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8") as file:
+                table_html = file.read()
+            content = Markup(table_html)
+        except FileNotFoundError:
+            content = "Table file not found."
+    elif section == "Semantische_Relationen":
+        try:
+            with open("s1-templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8") as file:
+                table_html = file.read()
+            content = Markup(table_html)
+        except FileNotFoundError:
+            content = "Table file not found."
+    elif section == "Technische_rechtliche":
+        try:
+            with open("s1-templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8") as file:
+                table_html = file.read()
+            content = Markup(table_html)
+        except FileNotFoundError:
+            content = "Table file not found."
+    else:
+        return render_template("Individual_page_var.html")
+
+    return render_template(
+        "Individual_page_var.html",
+        title=title,
+        artist_info=artist_info,
+        image_path=image_path,
+        section=section,
+        content=content,
+    )
 
 def fetch_object_by_name(name):
     with driver.session() as session:

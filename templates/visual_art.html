@@ -182,31 +182,11 @@
         <!-- Filters (keep your existing form if needed) -->
         <div>
             <form class="filters" action="" method="get">
-                <select name="section">
-                    <option value="" selected="selected">Painting</option>
-                </select>
 
-                <select name="collection">
-                    <option value="" selected="selected">Author</option>
-                </select>
+            </form>
+        </div><div>
+            <form class="filters" action="" method="get">
 
-                <select name="term">
-                    <option value="" selected="selected">Museum</option>
-                </select>
-
-                <select name="event">
-                    <option value="" selected="selected">Event</option>
-                </select>
-
-                <select name="Motifs">
-                    <option value="" selected="selected">Motifs</option>
-                </select>
-
-                <select name="Narrative">
-                    <option value="" selected="selected">Narrative</option>
-                </select>
-
-                <button class="reset">Reset</button>
             </form>
         </div>
 
@@ -221,7 +201,7 @@
                                  srcset="{{ url_for('static', filename=p.image_path) }} 1x,
                                          {{ url_for('static', filename=p.image_path) }} 2x"
                                  src="{{ url_for('static', filename=p.image_path) }}">
-                            <div class="type-icon theatre"><img src="{{ url_for('static', filename='images/book.png') }}" alt="image"></div>
+                            <div class="type-icon theatre"><img src="{{ url_for('static', filename='images/image.png') }}" alt="image"></div>
                         </div>
 
                         <figcaption class="theatre">

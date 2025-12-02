@@ -269,7 +269,7 @@ def Individual_page_var():
     elif section == "Inhaltliche_Beschreibung":
         try:
             with open(
-                    "../templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_inh_besc.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -278,7 +278,7 @@ def Individual_page_var():
     elif section == "Semantische_Annotation":
         try:
             with open(
-                    "../templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_sem_ann.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -287,7 +287,7 @@ def Individual_page_var():
     elif section == "Semantische_Relationen":
         try:
             with open(
-                    "../templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_sem_rel.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -296,7 +296,7 @@ def Individual_page_var():
     elif section == "Technische_rechtliche":
         try:
             with open(
-                    "../templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8"
+                    "../s1-templates/zwei_zigeuner_tech_rech.html", "r", encoding="utf-8"
             ) as file:
                 table_html = file.read()
             content = Markup(table_html)
@@ -341,7 +341,7 @@ def Roma_Sinti():
 
     try:
         with open(
-                "../templates/book_roma_all.html", "r", encoding="utf-8"
+                "../s1-templates/book_roma_all.html", "r", encoding="utf-8"
         ) as file:
             table_html = file.read()
         content = Markup(table_html)
@@ -369,7 +369,7 @@ def Zwei_Zigeuner():
 
     try:
         with open(
-                "../templates/zwei_zigeuner_obj_info_all.html", "r", encoding="utf-8"
+                "../s1-templates/zwei_zigeuner_obj_info_all.html", "r", encoding="utf-8"
         ) as file:
             table_html = file.read()
         content = Markup(table_html)
@@ -396,7 +396,7 @@ def Ilonka():
 
     try:
         with open(
-                "../templates/painting_ilonka_all.html", "r", encoding="utf-8"
+                "../s1-templates/painting_ilonka_all.html", "r", encoding="utf-8"
         ) as file:
             table_html = file.read()
         content = Markup(table_html)
@@ -425,7 +425,7 @@ def Zigeuner():
     image_path = "../private/Zigeuner.png"
     try:
         with open(
-                "../templates/painting_zigeuner_all.html", "r", encoding="utf-8"
+                "../s1-templates/painting_zigeuner_all.html", "r", encoding="utf-8"
         ) as file:
             table_html = file.read()
         content = Markup(table_html)
@@ -454,7 +454,7 @@ def Katze():
 
     try:
         with open(
-                "../templates/painting_katze_all.html", "r", encoding="utf-8"
+                "../s1-templates/painting_katze_all.html", "r", encoding="utf-8"
         ) as file:
             table_html = file.read()
         content = Markup(table_html)
