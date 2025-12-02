@@ -116,66 +116,18 @@
 
     <h2>All Metadata</h2>
     <table class="property-table">
-      <thead>
-        <tr>
-          <th>Property</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% set ordered_keys = [
-          "Objekt-ID",
-          "Titel",
-          "Künstler*in/Autor*in",
-          "Sichtbare oder genannte Personen",
-          "Entstehungsjahr",
-          "Ort der Entstehung / Nutzung",
-          "Gattung / Genre",
-          "Technik",
-          "Dimensionen",
-          "Kurzbeschreibung",
-          "Motive / Topoi",
-          "Narrative / Diskurse",
-          "Historischer Kontext",
-          "Antiziganistische / Stigmatisierende Elemente",
-          "Agency",
-          "Verknüpfung",
-          "Narrativwandel bei Medienwechsel",
-          "Rezeptionsweg",
-          "Sammlung / Archiv",
-          "Provenienz",
-          "Literatur",
-          "Ausstellungen / Aufführungen / Veröffentlichungen",
-          "Objekt- oder Werkteil",
-          "Rechte / Lizenzen",
-          "Digitalisat-Link/Pfad",
-          "Metadaten-Status",
-          "Erfasst von",
-          "Erfassungsdatum",
-          "Kommentar / Anmerkung",
-          "Versionsgeschichte"
-        ] %}
-
-        {% for key in ordered_keys %}
-        <tr>
-          <td>{{ key }}</td>
-          <td>
-            {% set value = content.get(key, "No data") %}
-            {% if value is string and value.startswith("http") %}
-              <a href="{{ value }}" target="_blank">{{ value }}</a>
-            {% elif value is iterable and not value is string %}
-              <ul>
-                {% for item in value %}
-                  <li>{{ item }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              {{ value }}
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
+      {% for key, value in content.items() %}
+      <tr>
+        <th>{{ key }}</th>
+        <td>
+          {% if value is string and value.startswith("http") %}
+            <a href="{{ value }}" target="_blank">{{ value }}</a>
+          {% else %}
+            {{ value }}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
     </table>
 
     <footer class="site">
