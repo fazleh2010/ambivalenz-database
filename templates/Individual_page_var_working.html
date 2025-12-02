@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/screen.css') }}">
+    <style>
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1300px;
+            margin: 40px auto;
+        }
+        .portrait {
+            width: 400px;
+            height: 400px;
+            object-fit: cover;
+            border: 2px solid black;
+            border-radius: 8px;
+        }
+        .text {
+            width: 660px;
+            padding: 20px;
+            border: 2px solid black;
+            border-radius: 8px;
+        }
+        table {
+            width: 60%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 2px solid black;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #eaeaea;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ title }}</h1>
+        <a href="{{ url_for('visual_art') }}">Back to Visual Art</a>
+    </header>
+
+    <div class="container">
+        <img class="portrait" src="{{ url_for('static', filename=image_path) }}" alt="{{ title }}">
+        <div class="text">
+            <p>{{ artist_info }}</p>
+        </div>
+    </div>
+
+    <h2>All Metadata</h2>
+    <table>
+        {% for key, value in content.items() %}
+        <tr>
+            <th>{{ key }}</th>
+            <td>
+                {% if value is string and value.startswith("http") %}
+                    <a href="{{ value }}" target="_blank">{{ value }}</a>
+                {% else %}
+                    {{ value }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <footer>
+        <p>Antiziganismus und Ambivalenz in Europa</p>
+    </footer>
+</body>
+</html>

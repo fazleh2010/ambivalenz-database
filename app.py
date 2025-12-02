@@ -230,7 +230,7 @@ def visual_art():
 def painting_page(painting_name):
     with driver.session() as session:
         query = """
-            MATCH (n:Objekt {name: $name})
+            MATCH (n:Painting {Name: $name})
             RETURN n
         """
         result = session.run(query, name=painting_name)
@@ -240,14 +240,14 @@ def painting_page(painting_name):
         return f"No data found for '{painting_name}'."
 
     node = dict(record["n"])
+
     return render_template(
         "Individual_page_var.html",
         title=node.get("Titel", painting_name),
         artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("image_path", ""),
-        content=node  # optional: full properties
+        image_path=node.get("Digitalisat-Link/Pfad", ""),  # correct field
+        content=node
     )
-
 
 
 
