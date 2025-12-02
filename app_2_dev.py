@@ -15,12 +15,7 @@ import re
 import random
 import subprocess
 import spacy
-from flask import Flask, render_template, request
-from markupsafe import Markup
-from neo4j import GraphDatabase
 
-# CALL db.labels();
-#
 # -----------------------
 # App configuration
 # -----------------------
@@ -175,82 +170,13 @@ def nodes():
 def sections():
     return render_template("sections.html")
 
-# ---------------------------------------------------------
-# FETCH ALL PAINTINGS FROM NEO4J
-# ---------------------------------------------------------
-def get_all_paintings():
-    """
-    Fetch all paintings from Neo4j, print their full data,
-    and return a list of dictionaries for template rendering.
-    """
-    paintings = []
-    with driver.session() as session:
-        query = """
-            MATCH (p:Painting)
-            RETURN p
-            ORDER BY p.Name
-        """
-        result = session.run(query)
-
-        print("\n---- ALL PAINTING NODES IN DATABASE ----\n")
-
-        for record in result:
-            node = dict(record["p"])
-
-            # Print full node for debugging
-            print("🎨 Painting Node:")
-            for k, v in node.items():
-                print(f"  {k}: {v}")
-            print("--------------------------------------\n")
-
-            # Append for use in template
-            paintings.append({
-                "name": node.get("Name", ""),
-                "title": node.get("Titel", node.get("Name", "")),
-                "description": node.get("Kurzbeschreibung", ""),
-                "image_path": node.get("Digitalisat-Link/Pfad", ""),
-                "url": f"/visual_art/{node.get('Name','')}"
-            })
-
-    return paintings
-
-
-# ---------------------------------------------------------
-# VISUAL ART ROUTE
-# ---------------------------------------------------------
-@app.route("/visual_art")
+@app.route("/visual_art", methods=["GET", "POST"])
 def visual_art():
-    paintings = get_all_paintings()
-    return render_template("visual_art.html", paintings=paintings)
-
-# ---------------------------------------------------------
-# INDIVIDUAL PAINTING ROUTE
-# ---------------------------------------------------------
-@app.route("/visual_art/<painting_name>")
-def painting_page(painting_name):
-    with driver.session() as session:
-        query = """
-            MATCH (n:Objekt {name: $name})
-            RETURN n
-        """
-        result = session.run(query, name=painting_name)
-        record = result.single()
-
-    if not record:
-        return f"No data found for '{painting_name}'."
-
-    node = dict(record["n"])
-    return render_template(
-        "Individual_page_var.html",
-        title=node.get("Titel", painting_name),
-        artist_info=node.get("Kurzbeschreibung", ""),
-        image_path=node.get("image_path", ""),
-        content=node  # optional: full properties
-    )
-
-
-
-
+    keys, records, error, submitted_query = [], [], None, ""
+    if request.method == "POST":
+        submitted_query = request.form.get("cypher_query")
+        keys, records, error = run_cypher_query(submitted_query)
+    return render_template("visual_art.html", keys=keys, records=records, error=error, query=submitted_query)
 
 @app.route("/audio")
 def audio():
@@ -691,20 +617,104 @@ def Zigeunerin():
         content = "Table file not found."
     return render_template("Individual_page_var.html", title=title, artist_info=artist_info, image_path=image_path, content=content)
 
-@app.route("/visual_art/Zigeunerpaar")
-def Zigeunerpaar():
-    title = "Zigeunerpaar"
-    artist_info = """
-      Paar in leichter Draufsicht und grellem Sonnenlicht mit Schattenpartien gezeigt. Beide tragen bunte Kleidung, die Frau in farbenfroher Tracht blickt aus dem Bild heraus, während der Mann mit Hut zu ihr schaut. Das Gemälde ist einem pointillistischen Stil, indem die Pinselschläge an Mosaik erinnern. 
+
+app = Flask(__name__)
+
+# ------------------------------------------------------
+# Neo4j connection
+# ------------------------------------------------------
+driver = GraphDatabase.driver(
+    "bolt://neo4j:7687",
+    auth=("neo4j", "password")
+)
+
+# ------------------------------------------------------
+# Fetch all paintings (nodeType = "painting")
+# ------------------------------------------------------
+def fetch_all_paintings():
+    """
+    Returns a list of nodes where nodeType = 'painting'
+    """
+    with driver.session() as session:
+        query = """
+        MATCH (n)
+        WHERE n.nodeType = "painting"
+        RETURN n
         """
-    image_path = "private/Zigeunerpaar.png"
-    try:
-        with open("templates/painting_Zigeunerpaar_all.html", "r", encoding="utf-8") as file:
-            table_html = file.read()
-        content = Markup(table_html)
-    except FileNotFoundError:
-        content = "Table file not found."
-    return render_template("Individual_page_var.html", title=title, artist_info=artist_info, image_path=image_path, content=content)
+        results = session.run(query)
+        return [dict(record["n"]) for record in results]
+
+
+# ------------------------------------------------------
+# Fetch a single painting by name
+# ------------------------------------------------------
+def fetch_node_data(node_name):
+    with driver.session() as session:
+        query = """
+        MATCH (n {name: $name})
+        RETURN n
+        """
+        result = session.run(query, name=node_name)
+        record = result.single()
+
+    if record:
+        return dict(record["n"])
+    return None
+
+
+# ------------------------------------------------------
+# Convert node data → HTML table
+# ------------------------------------------------------
+def generate_html_table(node_data):
+    html = "<table border='1'><tr><th>Property</th><th>Value</th></tr>"
+    for key, value in node_data.items():
+        html += f"<tr><td>{key}</td><td>{value}</td></tr>"
+    html += "</table>"
+    return Markup(html)
+
+
+# ------------------------------------------------------
+# Automatically create a Flask route for one painting
+# ------------------------------------------------------
+def create_painting_route(painting_name):
+
+    route = f"/visual_art/{painting_name}"
+
+    @app.route(route)
+    def painting_page(painting_name=painting_name):
+
+        node_data = fetch_node_data(painting_name)
+
+        if not node_data:
+            return f"<h2>No Neo4j data found for: {painting_name}</h2>"
+
+        title = node_data.get("Titel", painting_name)
+        artist_info = node_data.get("Kurzbeschreibung", "")
+        image_path = node_data.get("image_path", "")
+
+        content = generate_html_table(node_data)
+
+        return render_template(
+            "Individual_page_var.html",
+            title=title,
+            artist_info=artist_info,
+            image_path=image_path,
+            content=content
+        )
+
+
+# ------------------------------------------------------
+# ON APPLICATION START:
+# Load all paintings and generate routes
+# ------------------------------------------------------
+all_paintings = fetch_all_paintings()
+
+for painting in all_paintings:
+    if "name" in painting:
+        create_painting_route(painting["name"])
+
+print(f"✔ Loaded {len(all_paintings)} painting routes from Neo4j.")
+
 
 @app.route("/Person/Person_Friedrich")
 def Person_Friedrich():
@@ -920,7 +930,6 @@ def add_data():
     return render_template("objekt_form_buttons.html", fields=fields, data=data, colors=colors, name_entities=name_entities)
 
 @app.route('/add_data/upload', methods=['POST'])
-@login_required
 def add_data_upload():
     file = request.files.get('file')
     if not file or file.filename == '':
@@ -943,7 +952,6 @@ def add_data_upload():
     return render_template("objekt_form_buttons.html", fields=list(data.keys()), data=data, colors=colors, name_entities=name_entities)
 
 @app.route('/add_data/extract_entities', methods=['POST'])
-@login_required
 def add_data_extract_entities():
     fields = get_field_list()
     data, colors, name_entities = {}, {}, {}
@@ -955,7 +963,6 @@ def add_data_extract_entities():
     return render_template("objekt_form_buttons.html", fields=fields, data=data, colors=colors, name_entities=name_entities)
 
 @app.route('/add_data/submit', methods=['POST'])
-@login_required
 def add_data_submit():
     posted = request.form
     rows = []

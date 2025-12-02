@@ -1,4 +1,5 @@
 ﻿version: "3.9"
+
 services:
   neo4j:
     image: neo4j:5.19
@@ -10,19 +11,31 @@ services:
     volumes:
       - neo4j_data:/data
 
+    # --- IMPORTANT FIX: Neo4j healthcheck ---
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p password 'RETURN 1' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+
   flaskapp:
     build: .
     ports:
       - "5000:5000"
+
+    # --- wait for neo4j to be healthy ---
     depends_on:
-      - neo4j
+      neo4j:
+        condition: service_healthy
+
     environment:
       - NEO4J_URI=bolt://neo4j:7687
       - NEO4J_USER=neo4j
       - NEO4J_PASSWORD=password
+
     volumes:
-      - .:/app  # Mount project folder
-      # Mount only the CSV input directory so Java can see dynamically created files
+      - .:/app
       - ./marburg-project/dataset/german/input:/app/marburg-project/dataset/german/input
 
 volumes:
